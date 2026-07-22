@@ -36,7 +36,7 @@ SQLite and Postgres; never read/write/delete data outside the app's own store."
 | ✅ | T-005 | Assets API — registry, derived status, manual lifecycle | 2026-07-22 |
 | ✅ | T-006 | Downtime API — report/end events, WO seeding | 2026-07-22 |
 | ✅ | T-007 | Work-order API — state machine, planning, audit | 2026-07-22 |
-| 🟡 | T-008 | Renderer UI — login, typed client, core screens | |
+| ✅ | T-008 | Renderer UI — login, typed client, core screens | 2026-07-22 |
 
 ## Queued / not-yet-specced items
 

@@ -16,6 +16,22 @@ The one line worth repeating because it's mandatory and cheap: every entry carri
 
 ## Log
 
+### T-008 — Renderer initial UI: typed API client, auth shell, all FS §7 screens live
+
+**Date:** 2026-07-22
+**Spec:** `docs/tasks/task_T-008_renderer-initial-ui.md`
+**Verified by human:** ✅ 2026-07-22 — full 14-step eye-test passed ("Tests passed -- ship it") after resolving TRAP-002 (a launch-directory trap, not a code defect).
+
+**What was built.** The first product surface (commit `a30e497`, 27 files): `src/api/types.ts` — TS mirrors of all 16 contract shapes (string-literal unions; the FS-Q1 pointer gets its own type + guard) — and `src/api/client.ts`, the single fetch wrapper (in-memory bearer token, `ApiError` preserving server `detail`, 401 hook resetting auth). The Rule 12 TS leg is now **live**: `api-contract.md`'s four "TS leg: N/A" notes replaced with typed pointers, same commit. Shell: auth context (relaunch = re-login), state-based navigation (**zero new npm deps** — lockfile untouched, verified), design-guide sidebar + tokens landed verbatim in `src/index.css` (no hex literals in components, grep-proven). All seven FS §7 screens wired live: asset tree (client-side path trie, status pills, register with surfaced 409/422), asset detail (formatted derived durations, report-down/mark-up, the FS-Q1 409 rendered as a pointer with a clickable WO link, edit/retire hidden for `uns_discovered` — display-only; server stays the gate), WO list (Open-queue planner default + My-work presets, filters), WO detail (audit trail, role/status-gated transition actions, every 403/409 detail surfaced), WO create. The one backend change: CORS middleware (`CMMESS_CORS_ORIGINS`, Vite dev defaults, `allow_credentials=False`) — PM-proven config-driven in both directions.
+
+**Files touched.** 27 — `src/api/`, `src/auth/`, `src/components/`, `src/screens/`, `src/App.tsx`, `src/index.css` (NEW/modified per the spec's §5 list); `backend/app/main.py` + `config.py` (CORS only); `docs/api-contract.md`. Untouchables verified untouched: `src/main.ts`, `src/preload.ts`, `src/renderer.tsx`, `package.json`, `package-lock.json`, models/migrations.
+
+**Deviations from spec.** None.
+
+**Architectural impact.** Trap-002 codified — see `docs/bug_log.md` (dev-launch cwd → `file://` renderer → all fetches CORS-dead; the packaged-app CORS story is explicitly the packaging task's to solve). 27 renderer tests join the suite.
+
+**User-facing impact.** The entire v1 reactive loop is now usable end to end by both roles — login through asset registration, downtime reporting, WO execution, and planning. No user-doc pages exist yet to update; authoring user docs becomes due with packaging/first release (Rule 18 note for that task).
+
 ### T-007 — Work-order API: FS §5 state machine, planning, single-choke-point audit trail
 
 **Date:** 2026-07-22
