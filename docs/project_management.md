@@ -32,6 +32,7 @@ SQLite and Postgres; never read/write/delete data outside the app's own store."
 | ✅ | T-001 | Backend skeleton — FastAPI /health + tooling | 2026-07-22 |
 | ✅ | T-002 | Renderer scaffold — Electron/Vite/React + green CI | 2026-07-22 |
 | ✅ | T-003 | Data model — SQLAlchemy/Alembic + core schema | 2026-07-22 |
+| ✅ | T-004 | Auth — seeded accounts, sessions, role enforcement | 2026-07-22 |
 
 ## Queued / not-yet-specced items
 

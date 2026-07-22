@@ -16,6 +16,22 @@ The one line worth repeating because it's mandatory and cheap: every entry carri
 
 ## Log
 
+### T-004 — Auth + roles: seeded accounts, sessions, server-side enforcement pattern
+
+**Date:** 2026-07-22
+**Spec:** `docs/tasks/task_T-004_auth-roles.md`
+**Verified by human:** ✅ 2026-07-22 — live runtime test against the human's `uvicorn` + dev DB (PM-executed at the human's direction): login/me/logout happy paths, identical generic 401s for bad-password vs. unknown-user, uniform 401 without token, 204 logout with the token 401ing afterwards.
+
+**What was built.** Backend auth (commit `04941a4`, direct on `main`): additive migration `0002` (`users.active` for seeded-config revocation; `sessions` storing only SHA-256 token hashes), TOML account seeding in the FastAPI lifespan (`CMMESS_USERS_FILE`, gitignored real config, committed example) with upsert-and-deactivate semantics — deactivation also kills live sessions, rows never deleted; `POST /auth/login` / `POST /auth/logout` / `GET /auth/me` with opaque bearer tokens (`secrets.token_urlsafe(32)`, TTL via `CMMESS_SESSION_TTL_HOURS`); and **the standing DEC-005 enforcement pattern** — `require_user`/`require_planner` dependencies (Planner ⊇ User, FS-Q3), named as *binding* for every future protected endpoint in `docs/api-contract.md`. Beyond spec, kept deliberately: timing-parity bcrypt verify on unknown usernames (latency doesn't enumerate either) and naive/aware datetime normalization for SQLite. `python -m app.hash_password` generates config hashes. 10 integration tests cover every §3d property, including token-hashed-at-rest proven by DB inspection and startup failing with an operator message on an unmigrated schema. Cursor QA: PASS (15 passed/1 expected skip); the Postgres leg was exercised once for real by the coding agent (throwaway Postgres 16 container, fresh + stepwise 0001→0002).
+
+**Files touched.** NEW: `backend/app/auth.py` · `backend/app/seeding.py` · `backend/app/hash_password.py` · `backend/alembic/versions/0002_auth_sessions.py` · `backend/tests/test_auth.py` · `backend/config/users.example.toml`. Modified: `backend/app/main.py` (router + lifespan) · `backend/app/config.py` · `backend/app/models.py` (`active`, `Session`) · `backend/requirements.txt` (+bcrypt) · `.gitignore` (+`backend/config/users.toml`) · `docs/api-contract.md` (Auth section, same commit) · `docs/data-model.md` (0002 surface, same commit).
+
+**Deviations from spec.** None. Known non-blocking (QA smell, accepted): a hand-corrupted `password_hash` in config/DB would 500 on `bcrypt.checkpw` rather than 401 — not spec-required; the hash-helper + example-file flow makes it unlikely.
+
+**Architectural impact.** DEC-005 now has its canonical implementation; `require_user`/`require_planner` is the enforcement pattern all future endpoints copy (recorded as binding in `docs/api-contract.md` § Auth).
+
+**User-facing impact.** None yet — backend-only by Architect decision; the renderer login task delivers the user-visible surface (and the TS leg of the auth contract).
+
 ### T-003 — Data model + persistence base: SQLAlchemy 2.0, Alembic dual-engine, core schema
 
 **Date:** 2026-07-22

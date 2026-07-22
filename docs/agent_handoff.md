@@ -34,10 +34,14 @@ Then read what's relevant per the Tier-1/Tier-2 list in the project instructions
 
 **T-003 shipped and closed out (2026-07-22).** Persistence base live (commit `4a5a651` on `main`): five typed models, dual-engine Alembic initial migration, FS-Q1 partial unique index + origin↔event pairing CHECK both DB-enforced and test-proven, `docs/data-model.md` authored same commit (Rule 12; authority index updated to *live*). Agent verified against real Postgres 16 (Docker) beyond the env-gated skip. Cursor QA PASS (5 passed/1 visible skip). Known non-blocking: `test_models` fixture uses a raw engine without the SQLite FK pragma — fine for its constraint proofs, but any future FK-violation test must use the `app.db` engine path. Postgres-in-CI still deliberately deferred (`CMMESS_TEST_POSTGRES_URL` activates the leg). Full record: `docs/completed_development.md` § T-003.
 
+**T-003 CI green on `main` (run 29937301125)** — the pinned Python 3.12 executed the full suite, closing the local-3.14 gap. Benign CI annotation noted for later housekeeping: GitHub deprecation warnings on `actions/checkout@v4`/`setup-node@v4`/`setup-python@v5` — bump action versions in the next CI-touching task.
+
+**T-004 shipped, verified live, closed out (2026-07-22).** Auth is real on `main` (commit `04941a4`): seeded TOML accounts with revocation semantics, opaque sessions (SHA-256 at rest), and `require_user`/`require_planner` as the binding DEC-005 pattern (Planner ⊇ User) — recorded in `docs/api-contract.md` § Auth. Runtime-verified against the human's live `uvicorn` + dev DB (login/me/logout, identical no-enumeration 401s, revocation on logout). The dev DB is now migrated to head `0002` and the human's real `backend/config/users.toml` exists (gitignored, example passwords — **replace before any non-toy use**). Full record: `docs/completed_development.md` § T-004. Note: `docs/dev-history-temp.md` is an untracked temp file of the human's — leave uncommitted; delete on request.
+
 ## Immediate next steps
 
-1. PM: push `main`; **watch the CI run** (main-only session — CI is post-hoc).
-2. PM: spec **T-004 — auth/roles** (seeded config accounts per FS-Q5; login/session issuing; server-side per-endpoint role enforcement per DEC-005; first real api-contract.md growth).
+1. PM: push `main`; watch CI (post-hoc, main-only session).
+2. Architect's ordering call for the next slice: **T-005 renderer login + typed API client** (first TS leg of Rule 12, first design-guide-bound UI) vs. **backend domain endpoints first** (assets/downtime/WO on the T-003 schema behind the T-004 gates).
 
 ## Architecture authorities by area (read the one you're touching)
 
