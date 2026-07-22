@@ -65,4 +65,11 @@
 **Date:** 2026-07-21
 **Decision:** Asset discovery is driven by a live MQTT broker (with simulated data in dev). The backend is the only MQTT client — nothing else subscribes or publishes. The UNS topic structure is an authoritative, documented contract (`docs/uns-contract.md`). The local asset registry is a cache of UNS discovery, never the source of truth.
 **Rationale:** Matches how it will run, keeps a single ingestion point, and keeps the UNS authoritative for what assets exist so onboarding stays process-agnostic. Trade-off: dev needs a broker running with simulated messages, accepted since that mirrors production.
-**Supersedes:** none
+**Supersedes:** none *(narrowed by DEC-008: "never the source of truth" now applies to UNS-discovered assets; manually registered assets are registry-authoritative)*
+
+### DEC-008 — Manual asset registration; CMMess fully usable with zero UNS
+
+**Date:** 2026-07-22
+**Decision:** Assets may also be registered manually from the front end (either role), keyed by the **same UNS-style path namespace** as discovered assets. Each asset carries a typed provenance: for `uns_discovered` assets the UNS remains authoritative and the registry is a rebuilt cache (DEC-007 unchanged there); for `manual` assets the registry **is** authoritative. If UNS discovery later finds an asset at a manual asset's path, they are the same asset — provenance flips to `uns_discovered` and all attached history (downtime events, work orders) stays, because identity is the path. Manual asset registration + front-end downtime reporting + direct WO creation form a complete standalone loop: **no UNS connection is required to use the product.** Work-order origins accordingly: `uns_downtime`, `manual_downtime` (front-end-reported downtime through the same event→WO pipeline), `manual` (direct creation, no downtime event).
+**Rationale:** MVP requirement from the Senior Architect (2026-07-22): the event-driven core must not depend on UNS presence — users trigger events from the front end and generate their own work orders. The shared path namespace preserves the process-agnostic model and gives a clean merge when a UNS comes online, instead of a parallel second asset universe.
+**Supersedes:** none reversed — **narrows DEC-007** ("the local asset registry is never the source of truth" → true for UNS-discovered assets only).

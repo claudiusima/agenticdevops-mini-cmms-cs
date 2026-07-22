@@ -24,12 +24,12 @@ Then read what's relevant per the Tier-1/Tier-2 list in the project instructions
 
 **T-001 shipped and closed out (2026-07-22) — first full loop trip complete.** The backend skeleton is live: FastAPI `GET /health` through a typed Pydantic model, one passing pytest, ruff+mypy strict clean, `docs/api-contract.md` seeded in the same commit (Rule 12), root `.gitignore`. Commit `0a3e2a2` on `main` (direct commit — tolerated once; branch→PR resumes at T-002 when CI exists). Dev → Cursor QA → PM read-verify → human runtime test all exercised for real. Full record: `docs/completed_development.md` § T-001. Backend venv lives at `backend/.venv` (`source .venv/bin/activate` before `uvicorn app.main:app`). Note: the PM is temporarily running as a Claude Code instance (Desktop MCP bug anthropics/claude-code#79971).
 
-**Also remaining:** the human syncs the three constitution edits into the canonical Claude Project instructions field (api-contract Tier 2, Rule 12 repoint, §3 review-agent config path).
+**Functional spec drafted + DEC-008 landed (2026-07-22).** `docs/functional-spec.md` is live as the product-behavior authority (announced in `authority-docs-by-area.md`): three WO origins (`uns_downtime`/`manual_downtime`/`manual` — Architect decision), manual asset registration with provenance + path-merge rule (DEC-008, narrows DEC-007 — the product is fully usable with zero UNS), standard WO state machine (Open→Planned→In Progress→Completed, +Cancelled), User self-serve execution on Open WOs. `architecture-facts.md` and `CLAUDE.md` were synced to DEC-008 in the same pass. **Awaiting the Architect's pass on the FS's [default] markers and § 9 open questions (FS-Q1–Q8)** — defaults are workable, so this doesn't block T-002. The three earlier constitution edits are synced into the Project instructions field (done 2026-07-22). Temp file `docs/architecture-diagram-temp.md` exists for the human to pull out — not a living doc; delete on request (its "UNS authoritative" label predates DEC-008).
 
 ## Immediate next steps
 
 1. PM: spec T-002 — renderer scaffold + green CI (carries `ci.yml`; branch→PR→merge discipline resumes here).
-2. Human: sync the three constitution edits into the Claude Project instructions field (if still relevant while the PM runs as Claude Code).
+2. Human: pass over `docs/functional-spec.md` — rule on the **[default]** markers and FS-Q1–Q8 (async; doesn't block T-002).
 
 ## Architecture authorities by area (read the one you're touching)
 

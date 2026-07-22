@@ -16,8 +16,8 @@ The hard constraints live in `docs/architecture-facts.md` — read them and trea
 - **Authorization is enforced server-side, per endpoint.** Never rely on the renderer hiding or disabling a control as access control.
 - **The renderer↔backend boundary is typed end to end** — Pydantic models and TypeScript types must agree; never hand-roll a shape that bypasses the shared typed surface. A boundary change moves its Pydantic model + TS type + `docs/api-contract.md` in the same commit (Rule 12).
 - **Persistence goes through SQLAlchemy; Alembic migrations must run on both SQLite and Postgres** — no dialect-specific SQL.
-- **The backend is the only MQTT client; the UNS is authoritative for assets.** Any local asset table is a cache rebuilt from UNS, never the source of truth.
-- **Work-order origin is a typed, extensible field** (e.g. `uns_downtime`, `manual`) — never hardcode that a work order requires a downtime event.
+- **The backend is the only MQTT client; asset authority splits by provenance (DEC-008).** For UNS-discovered assets the UNS is authoritative and the local row is a cache rebuilt from discovery; for manually registered assets the registry is authoritative. All assets share one UNS-style path namespace; never hardcode that assets require a UNS connection.
+- **Work-order origin is a typed, extensible field** (`uns_downtime`, `manual_downtime`, `manual`) — never hardcode that a work order requires a downtime event, or that a downtime event requires the UNS.
 
 ## Traps that bite the coding agent specifically
 

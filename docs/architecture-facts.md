@@ -24,20 +24,27 @@ resistance topology: a plain REST contract, not a two-hop IPC+HTTP chain.)
 ## Canonical data formats
 
 **A work order is seeded from a typed, extensible trigger source.** In v1 the
-sources are: an automated **downtime** trigger detected via the UNS, or **manual**
-creation by a User or Planner. The work order's origin is a first-class typed field
-(e.g. `uns_downtime`, `manual`, with `created_by` recording the actual user) —
-never hardcoded such that a work order *requires* a downtime event. Reactive-only
-v1 must not preclude adding a scheduled/preventive origin later; the origin field is
-that extension point.
+sources are: an automated **downtime** trigger detected via the UNS, a
+**front-end-reported downtime** event (a person reports the asset down; same
+event→WO pipeline, different producer), or **direct manual** creation by a User or
+Planner with no downtime event. The work order's origin is a first-class typed
+field (`uns_downtime`, `manual_downtime`, `manual`, with `created_by` recording
+the actual user) — never hardcoded such that a work order *requires* a downtime
+event, or that an event *requires* the UNS. Reactive-only v1 must not preclude
+adding a scheduled/preventive origin later; the origin field is that extension
+point. (DEC-008; behavior authority: `docs/functional-spec.md`.)
 
-**Every work order ties to a UNS-discoverable asset, regardless of origin.**
-Seeding is not the same as planning: both roles may *create* a work order, but
-planning/scheduling stays Planner-gated (see Security baseline).
+**Every work order ties to a registered asset, regardless of origin** — whether
+that asset was UNS-discovered or manually registered (DEC-008). Seeding is not the
+same as planning: both roles may *create* a work order, but planning/scheduling
+stays Planner-gated (see Security baseline).
 
-**Asset identity is the UNS path.** Assets are generic, configurable entities keyed
-by their Unified-Namespace address — never a hardcoded, plant-specific equipment
-table. Process-agnostic onboarding is the product's distinctive move.
+**Asset identity is the UNS-style path — for every asset, however registered.**
+Assets are generic, configurable entities keyed by their Unified-Namespace
+address — never a hardcoded, plant-specific equipment table. Manually registered
+assets (DEC-008) live in the **same path namespace**, so a later UNS discovery at
+the same path merges with them rather than forking a second asset universe.
+Process-agnostic onboarding is the product's distinctive move.
 
 ## Persistence & migrations
 
@@ -82,9 +89,13 @@ test fixtures are touched.
 event log.** Store timestamped state transitions; compute duration and current
 status from them — never store a duration that can drift from its events.
 
-**The local asset registry is a cache of UNS discovery, not the source of truth.**
-The UNS is authoritative for what assets exist; any persisted asset table is rebuilt
-from UNS discovery, never treated as the authority.
+**Authority over the asset registry splits by provenance (DEC-008).** For
+`uns_discovered` assets, the UNS is authoritative and the registry row is a cache
+rebuilt from discovery — never treated as the authority. For `manual` assets
+(registered from the front end), the registry **is** authoritative. Provenance is
+a typed field; a UNS discovery at a manual asset's path flips its provenance and
+keeps its history (identity is the path). The product is fully usable with zero
+UNS connection.
 
 ## Styling / brand (UI)
 

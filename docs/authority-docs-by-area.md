@@ -9,12 +9,13 @@
 | Area | Authority doc | Read when |
 |---|---|---|
 | Architecture constraints (all areas) | `docs/architecture-facts.md` | every spec — the hard constraints to enforce |
+| Product behavior (features, roles, lifecycles, v1 scope) | `docs/functional-spec.md` | any feature work — what the product does, per role |
 | Persistence / data model | `docs/data-model.md` *(to author)* | any schema, migration, or storage work |
 | Renderer↔backend REST boundary | `docs/api-contract.md` *(live — seeded by T-001)* | any endpoint, request/response shape, or cross-boundary work |
 | UNS / MQTT asset discovery | `docs/uns-contract.md` *(to author)* | any UNS topic-structure or MQTT-client work |
 | What moves together at a boundary | `docs/contract-sync.md` | before changing **any** boundary contract (Rule 12) |
 | Auth / roles (authorization) | `docs/architecture-facts.md` § Security baseline | any login, token/session, or role-gating work |
-| Work-order / downtime domain | `docs/architecture-facts.md` § Canonical data formats + `docs/data-model.md` | any work-order seeding, planning/scheduling, or downtime-status logic |
+| Work-order / downtime domain | behavior: `docs/functional-spec.md` §§ 4–6 · schema: `docs/data-model.md` · constraints: `docs/architecture-facts.md` § Canonical data formats | any work-order seeding, planning/scheduling, or downtime-status logic |
 | UI visual design | `docs/design-guide.md` | any UI work (tokens, type scale, component patterns) |
 | Packaging / release | `docs/packaging.md` *(to author)* | any build, installer, or native-module-rebuild work |
 
